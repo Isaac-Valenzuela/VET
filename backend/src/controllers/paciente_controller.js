@@ -15,6 +15,14 @@ import generarJWT from "../helpers/crearJWT.js"
 
 // Método para el proceso de login
 const loginPaciente = async(req,res)=>{
+    if (req.pacienteBDD && "propietario" in req.pacienteBDD){
+        const pacientes = await Paciente.find(req.pacienteBDD._id).select("-salida -createdAt -updatedAt -__v").populate('veterinario','_id nombre apellido')
+        res.status(200).json(pacientes)
+    }
+    else{
+        const pacientes = await Paciente.find({estado:true}).where('veterinario').equals(req.veterinarioBDD).select("-salida -createdAt -updatedAt -__v").populate('veterinario','_id nombre apellido')
+        res.status(200).json(pacientes)
+    }
     const {email,password} = req.body
 
     if (Object.values(req.body).includes("")) return res.status(404).json({msg:"Lo sentimos, debes llenar todos los campos"})
@@ -38,6 +46,7 @@ const loginPaciente = async(req,res)=>{
         emailP,
         celular,
         convencional,
+        rol: "paciente",
         _id
     })
 }

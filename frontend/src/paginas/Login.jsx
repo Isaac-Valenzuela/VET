@@ -5,9 +5,8 @@ import { useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify';
 import AuthContext from '../context/AuthProvider';
 
-
 const Login = () => {
-
+    const [setMensaje] = useState({})
     const navigate = useNavigate()
     const { setAuth } = useContext(AuthContext)
 
@@ -25,19 +24,21 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        try {
-            const url = `http://localhost:5000/api/login`
-            const respuesta = await axios.post(url, form)
-            localStorage.setItem('token', respuesta.data.token)
-            setAuth(respuesta.data)
-
-            console.log(respuesta)
-            toast.success(respuesta.data.msg)
-
-            navigate('/dashboard')
-        } catch (error) {
-            toast.error(error.response.data.msg)
-        }
+        const url = form.password.includes("vet")
+            ? `http://localhost:5000/api/paciente/login`
+            : `http://localhost:5000/api/login`
+            try {
+                const respuesta = await axios.post(url, form)
+                localStorage.setItem('token', respuesta.data.token)
+                setAuth(respuesta.data)
+                navigate('/dashboard')
+            } catch (error) {
+                setMensaje({ respuesta: error.response.data.msg, tipo: false })
+                setform({})
+                setTimeout(() => {
+                    setMensaje({})
+                }, 3000);
+            }
     }
 
 

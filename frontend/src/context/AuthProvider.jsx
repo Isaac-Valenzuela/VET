@@ -7,8 +7,10 @@ const AuthProvider = ({ children }) => {
     const [auth, setAuth] = useState({})
 
     const perfil = async (token) => {
+        const url = form.password.includes("vet")
+            ? `http://localhost:5000/api/paciente/perfil`
+            : `http://localhost:5000/api/veterinario/perfil`
         try {
-            const url = `http://localhost:5000/api/perfil`
             const options = {
                 headers: {
                     'Content-Type': 'application/json',
@@ -29,9 +31,11 @@ const AuthProvider = ({ children }) => {
     }, [])
 
     const actualizarPerfil = async (datos) => {
+        const url = form.password.includes("vet")
+            ? `http://localhost:5000/api/paciente/${datos.id}`
+            : `http://localhost:5000/api/veterinario/${datos.id}`
         const token = localStorage.getItem('token')
         try {
-            const url = `http://localhost:5000/api/veterinario/${datos.id}`
             const options = {
                 headers: {
                     method: 'PUT',
